@@ -3,7 +3,7 @@
 contract-rs/target
 **/target/
 **/pkg/
-
+**/node_modules
 # IDE
 .idea
 
