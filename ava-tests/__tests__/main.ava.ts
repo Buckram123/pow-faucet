@@ -129,3 +129,31 @@ workspace.test('Fail create account already created', async (test, { faucet, roo
   );
   test.regex(errorString, /The given given account is already created/);
 });
+
+workspace.test('Fail work is too weak', async (test, { faucet, root }) => {
+  const accountSuffix = '.' + faucet.accountId;
+  const minDifficulty = 20;
+  await root.call(
+    faucet,
+    'new',
+    { account_suffix: accountSuffix, min_difficulty: minDifficulty }
+  );
+
+  const accountId = 'test' + accountSuffix;
+  const publicKey = new Array(33).fill(0);
+  const salt = 0;
+
+  const errorString = await captureError(async () =>
+    root.call(
+      faucet,
+      'create_account',
+      {
+        account_id: accountId,
+        public_key: publicKey,
+        salt: salt,
+      }
+    )
+  );
+  test.regex(errorString, /The proof is work is too weak/);
+});
+
